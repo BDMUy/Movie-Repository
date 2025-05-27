@@ -1,0 +1,115 @@
+.row {
+  padding: 20px;
+  position: relative;
+}
+
+.row h2 {
+  margin-bottom: 10px;
+}
+
+/* Contenedor del carrusel: ocupa el ancho disponible */
+.row__carousel-container {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+}
+
+.row__carousel {
+  overflow: hidden;
+  width: 100%;
+}
+
+/* Contenedor interno que se desplaza horizontalmente */
+.row__inner {
+  display: flex;
+  gap: 20px;
+}
+
+/* Estilo de cada poster */
+.row__poster {
+  width: 210px;
+  cursor: pointer;
+  transition: transform 450ms;
+  height: 83% !important;
+}
+
+/* Botones de flecha con un diseño moderno */
+.row__arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: linear-gradient(135deg, rgba(0,0,0,0.6), rgba(0,0,0,0.3));
+  border: none;
+  color: #fff;
+  font-size: 2rem;
+  cursor: pointer;
+  z-index: 10;
+  padding: 20px 2px;
+  opacity: 0.8;
+  transition: opacity 0.3s, transform 0.3s;
+}
+
+.row__arrow:hover {
+  opacity: 1;
+  transform: translateY(-50%) scale(1.1);
+}
+
+.row__arrow--left {
+  left: 0;
+}
+
+.row__arrow--right {
+  right: 0;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .row__poster {
+    width: 150px;
+  }
+  .row__arrow {
+    font-size: 1.5rem;
+    padding: 6px 10px;
+  }
+}
+
+/* Contenedor para posicionar el rating sobre el poster */
+.poster-container {
+  position: relative;
+  display: inline-block;
+  padding-bottom: 5px;
+  height: 100%;
+}
+
+/* Estilo para el puntaje dentro de un círculo */
+.poster-rating {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  width: 40px;
+  height: 40px;
+  line-height: 40px;
+  text-align: center;
+  font-size: 1rem;
+  font-weight: bold;
+  color: #fff;
+  border-radius: 50%;
+}
+
+/* Nuevo estilo para el título del poster */
+.poster-title {
+  position: relative;
+  z-index: 10; /* Asegura que esté por encima de la imagen escalada */
+  margin-top: 5px;
+  font-size: 1rem;
+  text-align: center;
+  color: #fff;
+  width: 200px; /* Debe coincidir con el ancho del poster */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-weight: bold;
+  white-space: nowrap;
+  background: rgba(0, 0, 0, 0.6); /* Fondo semitransparente para mejorar la legibilidad */
+  padding: 2px 5px;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.5);
+}

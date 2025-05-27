@@ -1,0 +1,32 @@
+/* src/App.css */
+.app {
+  background-color: #111;
+  color: #fff;
+  min-height: 100vh;
+}
+
+/* Estilos globales para botones de scroll */
+.scroll-btn {
+  opacity: 0;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: linear-gradient(135deg, rgba(0,0,0,0.6), rgba(0,0,0,0.3));
+  border: none;
+  color: #fff;
+  font-size: 2rem;
+  cursor: pointer;
+  z-index: 10;
+  padding: 20px 5px;
+  border-radius: 2%;
+}
+
+.scroll-btn:hover {
+  transform: translateY(-50%) scale(1.1);
+}
+
+/* Al hacer hover sobre el contenedor que tenga la clase "scroll-container", se muestran los botones */
+.scroll-container:hover .scroll-btn {
+  opacity: 1;
+}
