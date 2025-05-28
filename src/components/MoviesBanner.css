@@ -1,0 +1,148 @@
+.moviesBanner {
+  position: relative;
+  height: 80vh;
+  overflow: hidden;
+  background: #000;
+  background-size: cover;
+  background-position: center;
+}
+
+.moviesBanner::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none; /* ✅ no bloquea drag ni clicks */
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.85) 0%, transparent 60%);
+  z-index: 1;
+}
+
+.moviesBanner__wrapper {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  pointer-events: all; /* ✅ necesario si arrastrás sobre elementos */
+}
+
+.moviesBanner__wrapper:active {
+  cursor: grabbing;
+}
+
+.moviesBanner__dragContent {
+  width: 100%;
+  height: 100%;
+  pointer-events: none; /* 🔑 permite drag en TODO */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+.moviesBanner__info,
+.moviesBanner__arrow,
+.moviesBanner__indicators,
+.moviesBanner--fadeBottom {
+  pointer-events: auto; /* 🔓 recupera interactividad */
+}
+
+.moviesBanner__content {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 40px 20px;
+  box-sizing: border-box;
+}
+
+.moviesBanner__info {
+  position: relative;
+  z-index: 2;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 0 20px;
+  color: #fff;
+  text-align: center;
+  text-shadow: 1px 1px 5px #000;
+}
+
+.moviesBanner__info h1 {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+}
+
+.moviesBanner__info p {
+  font-size: 1.2rem;
+  line-height: 1.6;
+}
+
+.moviesBanner__arrow {
+  position: absolute;
+  top: 50%;
+  font-size: 3rem;
+  color: white;
+  background-color: rgba(0, 0, 0, 0.3);
+  padding: 10px;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: 10;
+  transform: translateY(-50%);
+}
+
+.moviesBanner:hover .moviesBanner__arrow {
+  opacity: 1;
+}
+
+.moviesBanner__arrow.left {
+  left: 20px;
+}
+
+.moviesBanner__arrow.right {
+  right: 20px;
+}
+
+.moviesBanner__indicators {
+  position: absolute;
+  bottom: 20px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  gap: 3px;
+  z-index: 10;
+}
+
+.dot {
+  width: 20px;
+  height: 5px;
+  background-color: rgba(255, 255, 255, 0.4);
+  transition: background-color 0.3s;
+  cursor: pointer
+}
+
+.dot.active {
+  background-color: #ff416c;
+}
+
+.moviesBanner--fadeBottom {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 10vh;
+  background-image: linear-gradient(
+    180deg,
+    transparent,
+    rgba(0, 0, 0, 0.8)
+  );
+  z-index: 2;
+}

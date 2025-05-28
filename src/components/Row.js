@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { AnimatePresence, motion, useAnimation } from "framer-motion";
 import "./Row.css";
+import { fetchFromTMDb } from '../utils/tmdb';
 
 const Row = ({ title, fetchUrl, mediaType }) => {
   const [movies, setMovies] = useState([]);
@@ -16,10 +17,11 @@ const Row = ({ title, fetchUrl, mediaType }) => {
   useEffect(() => {
     async function fetchData() {
       try {
-        const response = await fetch(
-          `https://api.themoviedb.org/3${fetchUrl}?region=UY&api_key=${process.env.REACT_APP_TMDB_API_KEY}&language=en-US`
-        );
-        const data = await response.json();
+        const data = await fetchFromTMDb(fetchUrl, {region: "UY", language: "es-MX" })
+        if (!data || !data.results) {
+          console.error("No results found for fetchUrl:", fetchUrl);
+          return;
+        }
         setMovies(data.results);
         setStartIndex(0);
       } catch (error) {

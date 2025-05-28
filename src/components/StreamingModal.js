@@ -1,24 +1,20 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import "./StreamingModal.css";
+import { fetchFromTMDb } from '../utils/tmdb';
 
 const StreamingModal = ({ movieId, onClose }) => {
   const [providers, setProviders] = useState(null);
 
   useEffect(() => {
     async function fetchProviders() {
-      const url = `https://api.themoviedb.org/3/movie/${movieId}/watch/providers?api_key=${process.env.REACT_APP_TMDB_API_KEY}`;
-      console.log("Fetch URL:", url);
       try {
-        const response = await fetch(url);
-        if (!response.ok) {
-          console.error(
-            "Response error:",
-            response.status,
-            response.statusText
-          );
+        const data = await fetchFromTMDb(`/movie/${movieId}/watch/providers`);
+        if (!data || !data.results || !data.results.UY) {
+          console.warn("No streaming providers found for this movie.");
+          setProviders(null);
+          return;
         }
-        const data = await response.json();
         setProviders(data.results);
       } catch (error) {
         console.error("Error fetching streaming providers:", error);

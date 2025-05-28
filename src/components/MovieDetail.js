@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { useParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import "./MovieDetail.css";
+import { fetchFromTMDb } from '../utils/tmdb';
 
 const MovieDetail = () => {
   const { id } = useParams();
@@ -19,10 +20,11 @@ const MovieDetail = () => {
   useEffect(() => {
     async function fetchMovie() {
       try {
-        const response = await fetch(
-          `https://api.themoviedb.org/3/movie/${id}?api_key=${process.env.REACT_APP_TMDB_API_KEY}&language=es-MX`
-        );
-        const data = await response.json();
+        const data = await fetchFromTMDb("/movie/" + id, {language: "es-MX" })
+        if (!data || !data.id) {
+          console.error("Movie not found or invalid data:", data);
+          return;
+        }
         setMovie(data);
       } catch (error) {
         console.error("Error fetching movie details:", error);
@@ -35,10 +37,13 @@ const MovieDetail = () => {
   useEffect(() => {
     async function fetchActors() {
       try {
-        const response = await fetch(
-          `https://api.themoviedb.org/3/movie/${id}/credits?api_key=${process.env.REACT_APP_TMDB_API_KEY}&language=es-MX`
-        );
-        const data = await response.json();
+        // Usamos la función fetchFromTMDb para obtener los actores
+        const data = await fetchFromTMDb(`/movie/${id}/credits`, { language: "es-MX" });
+        if (!data.cast || data.cast.length === 0) {
+          console.warn("No actors found for this movie.");
+          setActors([]);
+          return;
+        }
         setActors(data.cast);
       } catch (error) {
         console.error("Error fetching actors:", error);
@@ -51,10 +56,12 @@ const MovieDetail = () => {
   useEffect(() => {
     async function fetchProviders() {
       try {
-        const response = await fetch(
-          `https://api.themoviedb.org/3/movie/${id}/watch/providers?api_key=${process.env.REACT_APP_TMDB_API_KEY}`
-        );
-        const data = await response.json();
+        const data = await fetchFromTMDb(`/movie/${id}/watch/providers`);
+        if (!data.results || !data.results.UY) {
+          console.warn("No streaming providers found for this movie.");
+          setProviders(null);
+          return;
+        }
         setProviders(data.results);
       } catch (error) {
         console.error("Error fetching streaming providers:", error);

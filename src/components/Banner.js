@@ -2,39 +2,41 @@ import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
 import "./Banner.css";
+import { fetchFromTMDb } from '../utils/tmdb';
 
 const Banner = () => {
-  //const [movie, setMovie] = useState(null);
-  const [movies, setMovies] = useState([]);
+  const [contents, setContent] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const autoPlayDelay = 110000;
+  const autoPlayDelay = 60000;
 
   useEffect(() => {
     async function fetchData() {
       try {
-        const response = await fetch(`http://localhost:5000/api/movie/trending`);
-        const data = await response.json();
-        //const movies = data.results;
-        //setMovie(movies[Math.floor(Math.random() * movies.length)]);
-        setMovies(data.results);
+
+        const data = await fetchFromTMDb("/trending/all/day", { language: "es-MX" });
+        if (!data || !data.results || data.results.length === 0) {
+          console.error("No trending contents found or invalid data:", data);
+          return;
+        }
+        setContent(data.results);
         setCurrentIndex(0);
       } catch (error) {
-        console.error("Error fetching trending movies:", error);
+        console.error("Error fetching trending contents:", error);
       }
     }
     fetchData();
   }, []);
 
   useEffect(() => {
-    if (movies.length > 0) {
+    if (contents.length > 0) {
       const interval = setInterval(() => {
-        setCurrentIndex((prev) => (prev + 1) % movies.length);
+        setCurrentIndex((prev) => (prev + 1) % contents.length);
       }, autoPlayDelay);
       return () => clearInterval(interval);
     }
-  }, [movies]);
+  }, [contents]);
 
-  const movie = movies[currentIndex];
+  const content = contents[currentIndex];
 
   return (
     <header className="banner">
@@ -47,25 +49,25 @@ const Banner = () => {
           exit={{ x: "-100%", opacity: 0 }}
           transition={{ type: "tween", stiffness: 50, damping: 25 }}
           style={{
-            backgroundImage: movie?.backdrop_path
-              ? `url("https://image.tmdb.org/t/p/original${movie.backdrop_path}")`
+            backgroundImage: content?.backdrop_path
+              ? `url("https://image.tmdb.org/t/p/original${content.backdrop_path}")`
               : "#000",
           }}
         />
       </AnimatePresence>
       <AnimatePresence exitBeforeEnter>
         <motion.div
-          key={`content-${currentIndex}`}
-          className="banner__contents"
+          key={`contents-${currentIndex}`}
+          className="banner__contentss"
           initial={{ x: "100%", opacity: 0 }}
           animate={{ x: "0%", opacity: 1 }}
           exit={{ x: "-100%", opacity: 0 }}
           transition={{ type: "tween", stiffness: 60, damping: 20 }}
         >
-            <h1 className="banner__title">{movie?.title || movie?.name}</h1>
-            <p className="banner__description">{movie?.overview}</p>
+            <h1 className="banner__title">{content?.title || content?.name}</h1>
+            <p className="banner__description">{content?.overview}</p>
             <div className="banner__buttons">
-              <Link to={`/movie/${movie?.id}`}>
+              <Link to={`/content/${content?.id}`}>
                 <motion.button
                   className="banner__button"
                   whileHover={{ scale: 1.05 }}
@@ -78,7 +80,7 @@ const Banner = () => {
         </motion.div>
       </AnimatePresence>
       <div className="banner__nav">
-        {movies.map((m, index) => (
+        {contents.map((m, index) => (
           <span
             key={m.id}
             className={`banner__nav-dot ${

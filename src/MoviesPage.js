@@ -1,6 +1,6 @@
 // src/MoviesPage.js
 import React from 'react';
-import Banner from './components/Banner';
+import Banner from './components/MoviesBanner';
 import Row from './components/Row';
 import './MoviesPage.css';
 

@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { useParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import "./SerieDetail.css";
+import { fetchFromTMDb } from '../utils/tmdb';
 
 const SerieDetail = () => {
   const { id } = useParams();
@@ -18,10 +19,11 @@ const SerieDetail = () => {
   useEffect(() => {
     async function fetchSerie() {
       try {
-        const response = await fetch(
-          `https://api.themoviedb.org/3/tv/${id}?api_key=${process.env.REACT_APP_TMDB_API_KEY}&language=es-MX`
-        );
-        const data = await response.json();
+        const data = await fetchFromTMDb(`/tv/${id}`, { language: "es-MX" });
+        if (!data || !data.id) {
+          console.error("Serie not found or invalid data:", data);
+          return;
+        }
         setSerie(data);
       } catch (error) {
         console.error("Error fetching serie details:", error);
@@ -33,10 +35,12 @@ const SerieDetail = () => {
   useEffect(() => {
     async function fetchActors() {
       try {
-        const response = await fetch(
-          `https://api.themoviedb.org/3/tv/${id}/credits?api_key=${process.env.REACT_APP_TMDB_API_KEY}&language=es-MX`
-        );
-        const data = await response.json();
+        const data = await fetchFromTMDb(`/tv/${id}/credits`, { language: "es-MX" });
+        if (!data.cast || data.cast.length === 0) {
+          console.warn("No actors found for this serie.");
+          setActors([]);
+          return;
+        }
         setActors(data.cast);
       } catch (error) {
         console.error("Error fetching serie actors:", error);
@@ -49,10 +53,12 @@ const SerieDetail = () => {
   useEffect(() => {
     async function fetchProviders() {
       try {
-        const response = await fetch(
-          `https://api.themoviedb.org/3/tv/${id}/watch/providers?api_key=${process.env.REACT_APP_TMDB_API_KEY}`
-        );
-        const data = await response.json();
+        const data = await fetchFromTMDb(`/tv/${id}/watch/providers`);
+        if (!data.results || !data.results.UY) {
+          console.warn("No streaming providers found for this serie.");
+          setProviders(null);
+          return;
+        }
         setProviders(data.results);
       } catch (error) {
         console.error("Error fetching streaming providers:", error);
