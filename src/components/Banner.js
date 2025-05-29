@@ -1,24 +1,29 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
-import "./Banner.css";
-import { fetchFromTMDb } from '../utils/tmdb';
+import "./ContentBanner.css";
+import { fetchFromTMDb } from "../utils/tmdb";
 
-const Banner = () => {
-  const [contents, setContent] = useState([]);
+const ContentsBanner = () => {
+  const [contents, setContents] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const autoPlayDelay = 60000;
+  const [direction, setDirection] = useState(0);
+  const autoPlayDelay = 30000;
+  const intervalRef = useRef(null);
+  const [progress, setProgress] = useState(0); // de 0 a 100
+  const isPausedRef = useRef(false);
 
   useEffect(() => {
     async function fetchData() {
       try {
-
-        const data = await fetchFromTMDb("/trending/all/day", { language: "es-MX" });
-        if (!data || !data.results || data.results.length === 0) {
-          console.error("No trending contents found or invalid data:", data);
+        const data = await fetchFromTMDb("/trending/all/day", {
+          language: "es-MX",
+        });
+        if (!data?.results || data.results.length === 0) {
+          console.error("No trending contents found");
           return;
         }
-        setContent(data.results);
+        setContents(data.results);
         setCurrentIndex(0);
       } catch (error) {
         console.error("Error fetching trending contents:", error);
@@ -27,72 +32,168 @@ const Banner = () => {
     fetchData();
   }, []);
 
+  const startAutoPlay = useCallback(() => {
+    if (intervalRef.current) clearInterval(intervalRef.current);
+    setProgress(0); // Reinicia progreso visual
+  }, []);
+
   useEffect(() => {
-    if (contents.length > 0) {
-      const interval = setInterval(() => {
-        setCurrentIndex((prev) => (prev + 1) % contents.length);
-      }, autoPlayDelay);
-      return () => clearInterval(interval);
-    }
-  }, [contents]);
+    let interval = intervalRef.current;
+    startAutoPlay();
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [contents, startAutoPlay]);
+
+  const handleNext = useCallback(() => {
+    setDirection(1);
+    setCurrentIndex((prevIndex) =>
+      prevIndex === contents.length - 1 ? 0 : prevIndex + 1
+    );
+    startAutoPlay();
+  }, [contents.length, startAutoPlay]);
+
+  const handlePrev = useCallback(() => {
+    setDirection(-1);
+    setCurrentIndex((prevIndex) =>
+      prevIndex === 0 ? contents.length - 1 : prevIndex - 1
+    );
+    startAutoPlay();
+  }, [contents.length, startAutoPlay]);
+
+  const handleMouseEnter = () => {
+    isPausedRef.current = true;
+  };
+
+  const handleMouseLeave = () => {
+    isPausedRef.current = false;
+  };
+
+  useEffect(() => {
+    let counter = 0;
+    const step = 100 / (autoPlayDelay / 100); // avance cada 100ms
+
+    const interval = setInterval(() => {
+      if (isPausedRef.current) return;
+      counter += step;
+      if (counter >= 100) {
+        handleNext();
+        counter = 0;
+      }
+      setProgress(counter);
+    }, 100);
+
+    return () => clearInterval(interval);
+  }, [contents, currentIndex, handleNext]);
+
+  const bannerVariants = {
+    enter: (direction) => ({
+      x: direction > 0 ? 300 : -300,
+      opacity: 0,
+      position: "absolute",
+    }),
+    center: {
+      x: 0,
+      opacity: 1,
+      position: "absolute",
+    },
+    exit: (direction) => ({
+      x: direction < 0 ? 300 : -300,
+      opacity: 0,
+      position: "absolute",
+    }),
+  };
 
   const content = contents[currentIndex];
 
   return (
-    <header className="banner">
-      <AnimatePresence exitBeforeEnter>
-        <motion.div
-          key={`bg-${currentIndex}`}
-          className="banner__bg"
-          initial={{ x: "100%", opacity: 0 }}
-          animate={{ x: "0%", opacity: 1 }}
-          exit={{ x: "-100%", opacity: 0 }}
-          transition={{ type: "tween", stiffness: 50, damping: 25 }}
-          style={{
-            backgroundImage: content?.backdrop_path
-              ? `url("https://image.tmdb.org/t/p/original${content.backdrop_path}")`
-              : "#000",
-          }}
-        />
-      </AnimatePresence>
-      <AnimatePresence exitBeforeEnter>
-        <motion.div
-          key={`contents-${currentIndex}`}
-          className="banner__contentss"
-          initial={{ x: "100%", opacity: 0 }}
-          animate={{ x: "0%", opacity: 1 }}
-          exit={{ x: "-100%", opacity: 0 }}
-          transition={{ type: "tween", stiffness: 60, damping: 20 }}
-        >
-            <h1 className="banner__title">{content?.title || content?.name}</h1>
-            <p className="banner__description">{content?.overview}</p>
-            <div className="banner__buttons">
-              <Link to={`/content/${content?.id}`}>
-                <motion.button
-                  className="banner__button"
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  Más información
-                </motion.button>
-              </Link>
+  <header
+    className="contentsBanner"
+    onMouseEnter={handleMouseEnter}
+    onMouseLeave={handleMouseLeave}
+  >
+    <AnimatePresence initial={false} custom={direction}>
+      {/* Fondo animado */}
+      <motion.div
+        key={content?.id + "-bg"}
+        className="contentsBanner__background"
+        initial={{ filter: "blur(10px)", scale: 1.1 }}
+        animate={{ filter: "blur(0px)", scale: 1 }}
+        exit={{ filter: "blur(10px)", scale: 1.1 }}
+        transition={{ duration: 0.5 }}
+        style={{
+          backgroundImage: content?.backdrop_path
+            ? `url("https://image.tmdb.org/t/p/original${content.backdrop_path}")`
+            : "#000",
+        }}
+      />
+    </AnimatePresence>
+
+    <AnimatePresence initial={false} custom={direction}>
+      <motion.div
+        key={content?.id}
+        className="contentsBanner__wrapper"
+        drag="x"
+        dragConstraints={{ left: 0, right: 0 }}
+        dragElastic={0.2}
+        onDragStart={(e) => e.stopPropagation()}
+        onDragEnd={(event, info) => {
+          if (info.offset.x < -100) handleNext();
+          else if (info.offset.x > 100) handlePrev();
+        }}
+        variants={bannerVariants}
+      >
+        <div className="contentsBanner__dragContent">
+          <div className="contentsBanner__arrow left" onClick={handlePrev}>
+            &#10094;
+          </div>
+          <div className="contentsBanner__arrow right" onClick={handleNext}>
+            &#10095;
+          </div>
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.5, ease: "easeOut" }}
+          >
+            <div className="contentsBanner__info">
+              <h1>{content?.name || content?.title}</h1>
+              <p>{content?.overview || "No hay descripción disponible"}</p>
+              <div className="contentsBanner__buttons">
+                <Link to={`/content/${content?.id}`}>
+                  <motion.button
+                    className="contentsBanner__button"
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    Más información
+                  </motion.button>
+                </Link>
+              </div>
             </div>
-        </motion.div>
-      </AnimatePresence>
-      <div className="banner__nav">
-        {contents.map((m, index) => (
-          <span
-            key={m.id}
-            className={`banner__nav-dot ${
-              index === currentIndex ? "active" : ""
-            }`}
-            onClick={() => setCurrentIndex(index)}
-          ></span>
-        ))}
-      </div>
-      <div className="banner--fadeBottom" />
-    </header>
+          </motion.div>
+          <div className="contentsBanner__indicators">
+            {contents.map((_, index) => (
+              <span
+                key={index}
+                className={`dot ${index === currentIndex ? "active" : ""}`}
+                onClick={() => {
+                  setCurrentIndex(index);
+                  startAutoPlay();
+                }}
+              />
+            ))}
+          </div>
+          <div
+            className="contentsBanner__progressBar"
+            style={{ width: `${progress}%` }}
+          />
+          <div className="contentsBanner--fadeBottom" />
+        </div>
+      </motion.div>
+    </AnimatePresence>
+  </header>
   );
 };
 
-export default Banner;
+export default ContentsBanner;

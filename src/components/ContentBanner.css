@@ -1,0 +1,252 @@
+.contentsBanner {
+  position: relative;
+  height: 65vh;
+  overflow: hidden;
+  background: #000;
+  background-size: cover;
+  background-position: center;
+  transition: all 0.3s ease;
+}
+
+.contentsBanner::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.85) 0%, transparent 60%);
+  z-index: 1;
+}
+
+.contentsBanner__wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  pointer-events: all;
+  z-index: 2;
+}
+
+.contentsBanner__wrapper:active {
+  cursor: grabbing;
+}
+
+.contentsBanner__dragContent {
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+.contentsBanner__info,
+.contentsBanner__arrow,
+.contentsBanner__indicators,
+.contentsBanner--fadeBottom {
+  pointer-events: auto;
+}
+
+.contentsBanner__info {
+  position: relative;
+  z-index: 2;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  color: #fff;
+  text-align: center;
+  text-shadow: 1px 1px 5px #000;
+  background: #000000ab;
+  min-height: 140px;
+}
+
+.contentsBanner__info h1 {
+  font-size: 2.5rem;
+}
+
+.contentsBanner__info p {
+  font-size: 1.2rem;
+  line-height: 1.6;
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.contentsBanner__buttons {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.contentsBanner__button {
+  border: none;
+  outline: none;
+  padding: 12px 30px;
+  font-size: 1.1rem;
+  border-radius: 30px;
+  cursor: pointer;
+  background: linear-gradient(45deg, #ff4b2b, #ff416c);
+  color: #fff;
+  transition: transform 0.3s, background 0.3s;
+  margin: 5px;
+}
+
+.contentsBanner__button:hover {
+  transform: scale(1.05);
+  background: linear-gradient(45deg, #ff416c, #ff4b2b);
+}
+
+.contentsBanner__arrow {
+  position: absolute;
+  top: 50%;
+  font-size: 3rem;
+  color: white;
+  background-color: rgba(0, 0, 0, 0.3);
+  padding: 15px;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: 10;
+  touch-action: manipulation;
+}
+
+.contentsBanner__arrow:hover {
+  transform: scale(1.1);
+}
+.contentsBanner__arrow:active {
+  transform: scale(0.95);
+}
+
+.contentsBanner:hover .contentsBanner__arrow {
+  opacity: 1;
+}
+
+.contentsBanner:hover .contentsBanner__indicators {
+  opacity: 1;
+}
+
+.contentsBanner__arrow.left {
+  left: 20px;
+}
+
+.contentsBanner__arrow.right {
+  right: 20px;
+}
+
+.contentsBanner__indicators {
+  position: absolute;
+  bottom: 20px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  gap: 3px;
+  z-index: 10;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.dot {
+  width: 20px;
+  height: 5px;
+  background-color: rgba(255, 255, 255, 0.4);
+  transition: background-color 0.3s;
+  transition: opacity 0.3s ease;
+  cursor: pointer;
+}
+
+.dot:hover {
+  transform: scale(1.1);
+}
+
+.dot.active {
+  background-color: #ff416c;
+}
+
+.contentsBanner--fadeBottom {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 10vh;
+  background-image: linear-gradient(
+    180deg,
+    transparent,
+    rgba(0, 0, 0, 0.8)
+  );
+  z-index: 2;
+}
+
+.contentsBanner__progressBar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 4px;
+  background: #ff416c;
+  z-index: 11;
+  transition: width 0.1s linear;
+}
+
+.contentsBanner__background {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-size: cover;
+  background-position: center;
+  z-index: 0;
+}
+
+.contentsBanner__overlay {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+@media (max-width:1920px) {
+  .contentsBanner {
+    height: 55vh;
+  }
+}
+/* 📱 Mobile optimization */
+@media (max-width: 768px) {
+  .contentsBanner__info h1 {
+    font-size: 1.8rem;
+  }
+
+  .contentsBanner__info p {
+    font-size: 1rem;
+    -webkit-line-clamp: 3;
+  }
+
+  .contentsBanner__buttons {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .contentsBanner__arrow {
+    font-size: 2.5rem;
+    padding: 10px;
+  }
+
+  .contentsBanner__indicators {
+    width: 80%;
+  }
+}
+
+/* 🖥️ Pantallas muy anchas */
+@media (min-aspect-ratio: 16/9) {
+  .contentsBanner__info {
+    max-width: 60%;
+  }
+}

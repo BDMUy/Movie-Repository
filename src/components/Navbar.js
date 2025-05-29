@@ -2,7 +2,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import "./Navbar.css";
-import logo from "../assets/movieRepositoryLogo.png";
+import logo from "../assets/MRLogo.png";
 
 const Navbar = () => {
   return (
