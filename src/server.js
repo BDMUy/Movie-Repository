@@ -3,7 +3,7 @@ const express = require('express');
 const fetch = require('node-fetch');
 const cors = require('cors');
 const app = express();
-const PORT = process.env.PORT_BACK;
+const PORT = process.env.PORT_BACK || 5000;
 const API_KEY = process.env.TMDB_API_KEY;
 
 app.use(cors());
