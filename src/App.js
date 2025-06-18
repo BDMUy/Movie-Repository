@@ -7,6 +7,7 @@ import MoviesPage from './MoviesPage';
 import SeriesPage from './SeriesPage';
 import MovieDetail from './components/MovieDetail';
 import SerieDetail from './components/SerieDetail';
+import NotFound from './NotFound';
 import './App.css';
 
 function App() {
@@ -20,6 +21,7 @@ function App() {
           <Route path="/series" element={<SeriesPage />} />
           <Route path="/movie/:id" element={<MovieDetail />} />
           <Route path="/serie/:id" element={<SerieDetail />} />
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </div>
     </Router>

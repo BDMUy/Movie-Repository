@@ -1,0 +1,12 @@
+.notFound {
+  text-align: center;
+  padding-top: 100px;
+  color: #fff;
+  background-color: #111;
+  min-height: 100vh;
+}
+
+.notFound h1 {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+}

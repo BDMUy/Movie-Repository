@@ -13,11 +13,13 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-router-dom": "^7.1.5",
-    "react-scripts": "5.0.1"
+    "react-scripts": "5.0.1",
+    "concurrently": "^8.2.0"
   },
   "scripts": {
-    "start": "start cmd /k \"node src/server.js\" && react-scripts start",
+    "start3": "start cmd /k \"node src/server.js\" && react-scripts start",
     "start2": "react-scripts start",
+    "start": "concurrently \"node src/server.js\" \"react-scripts start\"",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"

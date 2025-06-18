@@ -1,6 +1,7 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "MovieRepo",
+  "name": "Movie Repository",
+  "description": "Netflix-inspired web app to explore movies and series via the TMDb API",
   "icons": [
     {
       "src": "MRLogo.ico",

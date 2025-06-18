@@ -33,14 +33,17 @@ npm install
 
 ```bash
 TMDB_API_KEY=tu_api_key_de_tmdb
+PORT_BACK=5000
+REACT_APP_API_URL=http://localhost:5000
 ```
 
 > Podés obtener una clave en: https://www.themoviedb.org/settings/api
+> También podés copiar el archivo `.env.example` incluido y renombrarlo como `.env`.
 
 ### 4. Iniciar el servidor backend
 
 ```bash
-node server-v2.js
+node src/server.js
 ```
 
 ### 5. Iniciar el frontend
@@ -62,6 +65,7 @@ npm start
 | `/series`       | Listado de series                  |
 | `/movie/:id`    | Detalle de una película            |
 | `/serie/:id`    | Detalle de una serie               |
+| `*`             | Página 404 (ruta inexistente)      |
 
 ---
 
