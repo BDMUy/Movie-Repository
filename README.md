@@ -40,7 +40,7 @@ TMDB_API_KEY=tu_api_key_de_tmdb
 ### 4. Iniciar el servidor backend
 
 ```bash
-node server-v2.js
+node src/server.js
 ```
 
 ### 5. Iniciar el frontend
