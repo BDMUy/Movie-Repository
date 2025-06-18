@@ -49,7 +49,7 @@ node server-v2.js
 npm start
 ```
 
-> Abre `http://localhost:5000` en tu navegador.
+> Abre `http://localhost:3000` en tu navegador.
 
 ---
 
