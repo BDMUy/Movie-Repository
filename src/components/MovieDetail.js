@@ -9,6 +9,7 @@ const MovieDetail = () => {
   const [movie, setMovie] = useState(null);
   const [actors, setActors] = useState([]);
   const [providers, setProviders] = useState(null);
+  const [trailerKey, setTrailerKey] = useState(null);
 
   // Refs para el scroll horizontal de la lista de actores
   const actorContainerRef = useRef(null);
@@ -70,6 +71,24 @@ const MovieDetail = () => {
     fetchProviders();
   }, [id]);
 
+   // Llamada para obtener el trailer en YouTube
+  useEffect(() => {
+    async function fetchTrailer() {
+      try {
+        const data = await fetchFromTMDb(`/movie/${id}/videos`, { language: 'en-US' });
+        if (data.results && data.results.length > 0) {
+          const trailer = data.results.find(
+            (v) => v.type === 'Trailer' && v.site === 'YouTube'
+          );
+          setTrailerKey(trailer ? trailer.key : data.results[0].key);
+        }
+      } catch (error) {
+        console.error('Error fetching trailer:', error);
+      }
+    }
+    fetchTrailer();
+  }, [id]);
+
   // Eventos para el "drag" horizontal en la lista de actores
   const handleMouseDown = (e) => {
     isDown.current = true;
@@ -126,9 +145,20 @@ const MovieDetail = () => {
       <div
         className="movieDetail__backdrop"
         style={{
-          backgroundImage: `url("https://image.tmdb.org/t/p/original/${movie.backdrop_path}")`,
+          backgroundImage: trailerKey ? "none" : `url("https://image.tmdb.org/t/p/original/${movie.backdrop_path}")`,
         }}
-      ></div>
+      >
+        {trailerKey && (
+          <iframe
+            title="Trailer"
+            src={`https://www.youtube.com/embed/${trailerKey}`}
+            allow="autoplay; encrypted-media"
+            loading="lazy"
+            display="block"
+            width="100%"
+          />
+        )}
+      </div>
       <div className="movieDetail__info">
         <h1>{movie.title}</h1>
         <p>{movie.overview}</p>

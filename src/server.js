@@ -6,6 +6,11 @@ const app = express();
 const PORT = process.env.PORT_BACK;
 const API_KEY = process.env.TMDB_API_KEY;
 
+if (!API_KEY) {
+  console.error('TMDB_API_KEY is not defined. Set it in your environment variables.');
+  process.exit(1);
+}
+
 app.use(cors());
 
 app.get('/api/tmdb', async (req, res) => {

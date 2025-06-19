@@ -9,6 +9,7 @@ const SerieDetail = () => {
   const [serie, setSerie] = useState(null);
   const [actors, setActors] = useState([]);
   const [providers, setProviders] = useState(null);
+  const [trailerKey, setTrailerKey] = useState(null);
 
   // Refs para el scroll horizontal de la lista de actores
   const actorContainerRef = useRef(null);
@@ -66,6 +67,26 @@ const SerieDetail = () => {
     }
     fetchProviders();
   }, [id]);
+
+    // Llamada para obtener videos y seleccionar el trailer
+  useEffect(() => {
+    async function fetchTrailer() {
+      try {
+        const data = await fetchFromTMDb(`/tv/${id}/videos`);
+        if (!data.results || data.results.length === 0) return;
+        const trailer = data.results.find(
+          (v) => v.type === "Trailer" && v.site === "YouTube"
+        );
+        if (trailer) {
+          setTrailerKey(trailer.key);
+        }
+      } catch (error) {
+        console.error("Error fetching serie trailers:", error);
+      }
+    }
+    fetchTrailer();
+  }, [id]);
+
 
   // Eventos para el "drag" horizontal en la lista de actores
   const handleMouseDown = (e) => {
@@ -135,6 +156,15 @@ const SerieDetail = () => {
           <strong>Calificación:</strong> {serie.vote_average}
         </p>
       </div>
+      {trailerKey && (
+        <div className="serieDetail__trailer">
+          <iframe
+            src={`https://www.youtube.com/embed/${trailerKey}`}
+            title="Trailer"
+            allowFullScreen
+          />
+        </div>
+      )}
       <div className="serieDetail__actors">
         <h2>Actores Principales</h2>
         <div className="actorsWrapper">
