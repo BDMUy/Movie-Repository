@@ -156,6 +156,7 @@ const MovieDetail = () => {
             loading="lazy"
             display="block"
             width="100%"
+            left="0"
           />
         )}
       </div>
